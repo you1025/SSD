@@ -48,7 +48,7 @@ def train(net, train_loader, valid_loader, criterion, optimizer, device, epochs,
             optimizer.step()
 
             # 一定期間ごとにログを出力
-            if (iteration % 1 == 0):
+            if (iteration % 10 == 0):
                 iter_duration = time() - iter_start_time
                 logger.info(f"iteration: {iteration:5d} - loss: {loss.item():6.3f}, 10 iter: {iter_duration:4.1f} sec.")
                 iter_start_time = time()
