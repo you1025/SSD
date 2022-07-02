@@ -15,12 +15,18 @@
             "level": "INFO",
             "formatter": "default",
             "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "level": "DEBUG",
+            "formatter": "default",
+            "filename": "ssd.log"
         }
     },
 
     "loggers": {
         "SSD": {
-            "handlers": ["console"],
+            "handlers": ["console", "file"],
             "level": "INFO"
         }
     }
