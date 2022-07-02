@@ -20,7 +20,7 @@
             "class": "logging.FileHandler",
             "level": "DEBUG",
             "formatter": "default",
-            "filename": "ssd.log"
+            "filename": "logs/ssd.log"
         }
     },
 
