@@ -1,4 +1,5 @@
 import os, sys
+import yaml
 import warnings
 
 import torch
@@ -13,42 +14,26 @@ from models import SSD
 from criterions import MultiBoxLoss
 from train import train
 
+
 if __name__ == "__main__":
 
     # 不要な警告を無視
     warnings.simplefilter("ignore")
 
+    # 設定ファイルの読み込み
+    config_path = os.path.join(os.path.dirname(__file__), "train_config.yaml")
+    with open(config_path, "r") as f:
+        config = yaml.safe_load(f)
+
     # デバイスを取得
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # VOC のクラス定義
-    # TODO: config に移動
-    voc_classes = [
-        "aeroplane",
-        "bicycle",
-        "bird",
-        "boat",
-        "bottle",
-        "bus",
-        "car",
-        "cat",
-        "chair",
-        "cow",
-        "diningtable",
-        "dog",
-        "horse",
-        "motorbike",
-        "person",
-        "pottedplant",
-        "sheep",
-        "sofa",
-        "train",
-        "tvmonitor"
-    ]
+    voc_classes = config["classes"]
 
     # データのファイルパスを取得
-    # TODO: パスを config に移動
-    root_path = os.path.join(os.path.dirname(__file__), "data/VOCdevkit/VOC2012/")
+    source_dir = config["source_dir"]
+    root_path = os.path.join(os.path.dirname(__file__), source_dir)
     train_image_path_list, train_annotation_path_list, valid_image_path_list, valid_annotation_path_list = make_datapath_list(root_path)
 
     # Data Augumentation 用の transformer を作成
@@ -76,34 +61,34 @@ if __name__ == "__main__":
     )
 
     # DataLoader を作成
-    # TODO: batch_size と num_workers を config に移動
-    batch_size = 32
-    train_loader = DataLoader(train_dataset, batch_size, shuffle=True,  collate_fn=od_collate_fn, num_workers=2)
-    valid_loader = DataLoader(valid_dataset, batch_size, shuffle=False, collate_fn=od_collate_fn, num_workers=2)
+    batch_size  = config["data_loader"]["batch_size"]
+    num_workers = config["data_loader"]["num_workers"]
+    train_loader = DataLoader(train_dataset, batch_size, shuffle=True,  collate_fn=od_collate_fn, num_workers=num_workers)
+    valid_loader = DataLoader(valid_dataset, batch_size, shuffle=False, collate_fn=od_collate_fn, num_workers=num_workers)
 
     # モデルの作成
-    # TODO: ssd_config を config に移動
-    # TODO: VGG のパスを config に移動
-    ssd_config = {
-        "num_classes": 21,
-        "image_size": 300,
-        "bbox_aspect_num": [4, 6, 6, 6, 4, 4],
-        "feature_map_regions": [38, 19, 10, 5, 3, 1],
-        "region_sizes": [8, 16, 32, 64, 100, 300],
-        "min_sizes": [30, 60, 111, 162, 213, 264],
-        "max_sizes": [60, 111, 162, 213, 264, 315],
-        "aspect_ratios": [[2], [2, 3], [2, 3], [2, 3], [2], [2]]
-    }
+    ssd_config = config["ssd_config"]
     net = SSD(phase="train", config=ssd_config)
-    # 既存モデルで初期値を設定
-    vgg_weight_path = os.path.join(os.path.dirname(__file__), "weights/vgg/vgg16_reducedfc.pth")
-    vgg_weights = torch.load(vgg_weight_path)
-    net.init_parameters(vgg_weights)
 
-    criterion = MultiBoxLoss(jaccard_thresh=0.5, negpos_ratio=3, device=device)
-    optimizer = SGD(net.parameters(), lr=1e-3, momentum=0.9, weight_decay=5e-4)
+    # 既存モデルで初期値を設定
+    vgg_weight_path = config["model_weight"]["vgg"]
+    weight_path     = os.path.join(os.path.dirname(__file__), vgg_weight_path)
+    weights         = torch.load(weight_path)
+    net.init_parameters(weights)
+
+    # 損失の設定
+    jaccard_thresh = config["criterion"]["jaccard_thresh"]
+    negpos_ratio   = config["criterion"]["negpos_ratio"]
+    criterion = MultiBoxLoss(jaccard_thresh, negpos_ratio, device=device)
+
+    # 最適化の設定
+    learning_rate = eval(config["optimizer"]["SGD"]["learning_rate"])
+    momentum      = config["optimizer"]["SGD"]["momentum"]
+    weight_decay  = eval(config["optimizer"]["SGD"]["weight_decay"])
+    optimizer = SGD(net.parameters(), lr=learning_rate, momentum=momentum, weight_decay=weight_decay)
 
     # 学習の実行
-    # TODO: epochs を config に移動
-    # TODO: model_weight_output_dir を config に移動
-    train(net, train_loader, valid_loader, criterion, optimizer, device, epochs=1, model_weight_output_dir="weights/models")
+    epochs                  = config["train"]["epochs"]
+    model_weight_output_dir = config["train"]["model_weight_output_dir"]
+    iter_per_log            = config["train"]["iter_per_log"]
+    train(net, train_loader, valid_loader, criterion, optimizer, device, epochs, model_weight_output_dir, iter_per_log)

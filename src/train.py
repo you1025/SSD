@@ -9,7 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../logger/"))
 from logger import get_logger
 logger = get_logger()
 
-def train(net, train_loader, valid_loader, criterion, optimizer, device, epochs, model_weight_output_dir="./", last_iteration=0):
+def train(net, train_loader, valid_loader, criterion, optimizer, device, epochs, model_weight_output_dir="./", iter_per_log=10, last_iteration=0):
     net.to(device)
     print(f"device: {device}")
 
@@ -48,9 +48,10 @@ def train(net, train_loader, valid_loader, criterion, optimizer, device, epochs,
             optimizer.step()
 
             # 一定期間ごとにログを出力
-            if (iteration % 10 == 0):
+            # TODO: config で指定できるようにする
+            if (iteration % iter_per_log == 0):
                 iter_duration = time() - iter_start_time
-                logger.info(f"iteration: {iteration:5d} - loss: {loss.item():6.3f}, 10 iter: {iter_duration:4.1f} sec.")
+                logger.info(f"iteration: {iteration:5d} - loss: {loss.item():6.3f}, {iter_per_log} iter: {iter_duration:4.1f} sec.")
                 iter_start_time = time()
 
             epoch_train_loss += loss.item()
