@@ -78,7 +78,7 @@ if __name__ == "__main__":
     # DataLoader を作成
     # TODO: batch_size と num_workers を config に移動
     batch_size = 32
-    train_loader = DataLoader(train_dataset, batch_size, shuffle=True,  collate_fn=od_collate_fn, num_workers=1)
+    train_loader = DataLoader(train_dataset, batch_size, shuffle=True,  collate_fn=od_collate_fn, num_workers=2)
     valid_loader = DataLoader(valid_dataset, batch_size, shuffle=False, collate_fn=od_collate_fn, num_workers=2)
 
     # モデルの作成
