@@ -21,7 +21,7 @@ if __name__ == "__main__":
     warnings.simplefilter("ignore")
 
     # 設定ファイルの読み込み
-    config_path = os.path.join(os.path.dirname(__file__), "train_config.yaml")
+    config_path = os.path.join(os.path.dirname(__file__), "configs/train_config.yaml")
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 
@@ -67,11 +67,11 @@ if __name__ == "__main__":
     valid_loader = DataLoader(valid_dataset, batch_size, shuffle=False, collate_fn=od_collate_fn, num_workers=num_workers)
 
     # モデルの作成
-    ssd_config = config["ssd_config"]
+    ssd_config = config["model"]["ssd_config"]
     net = SSD(phase="train", config=ssd_config)
 
     # 既存モデルで初期値を設定
-    vgg_weight_path = config["model_weight"]["vgg"]
+    vgg_weight_path = config["model"]["initial_weight"]["vgg"]
     weight_path     = os.path.join(os.path.dirname(__file__), vgg_weight_path)
     weights         = torch.load(weight_path)
     net.init_parameters(weights)
