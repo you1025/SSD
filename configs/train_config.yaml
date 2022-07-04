@@ -1,3 +1,7 @@
+seed:
+  torch_manual_seed: 1025
+  cuda_manual_seed: 1025
+
 classes: [
     "aeroplane",
     "bicycle",

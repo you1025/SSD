@@ -26,6 +26,14 @@ if __name__ == "__main__":
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 
+    # 乱数シードの設定
+    manual_seed      = config["seed"]["torch_manual_seed"]
+    cuda_manual_seed = config["seed"]["cuda_manual_seed"]
+    torch.manual_seed(manual_seed)
+    torch.cuda.manual_seed(cuda_manual_seed)
+    torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms = True
+
     # デバイスを取得
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
