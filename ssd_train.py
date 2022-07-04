@@ -31,8 +31,11 @@ if __name__ == "__main__":
     cuda_manual_seed = config["seed"]["cuda_manual_seed"]
     torch.manual_seed(manual_seed)
     torch.cuda.manual_seed(cuda_manual_seed)
-    torch.backends.cudnn.deterministic = True
-    torch.use_deterministic_algorithms = True
+    # 決定論的アルゴリズムの可否
+    backends_cudnn_deterministic = config["deterministic"]["backends_cudnn_deterministic"]
+    use_deterministic_algorithms = config["deterministic"]["use_deterministic_algorithms"]
+    torch.backends.cudnn.deterministic = backends_cudnn_deterministic
+    torch.use_deterministic_algorithms = use_deterministic_algorithms
 
     # デバイスを取得
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

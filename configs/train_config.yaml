@@ -1,6 +1,9 @@
 seed:
   torch_manual_seed: 1025
   cuda_manual_seed: 1025
+deterministic:
+  backends_cudnn_deterministic: False # True を指定すると遅くなる...
+  use_deterministic_algorithms: True
 
 classes: [
     "aeroplane",
