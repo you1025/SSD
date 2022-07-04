@@ -56,7 +56,7 @@ def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, devi
 
         # スケジュールに従って optimizer の学習率を変更
         scheduler.step()
-        logger.info(f"optimizer: {optimizer}")
+        logger.debug(f"optimizer: {optimizer}")
 
         # 毎エポック終了ごとに訓練誤差を出力
         logger.info(f"epoch: {epoch+1} - train_loss: {epoch_train_loss:7.3f}")
