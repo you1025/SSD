@@ -3,7 +3,9 @@ __pycache__
 .ipynb_checkpoints
 
 data/VOCdevkit
-images/
+images/input/*
+images/output/*
 weights/vgg
 weights/models
 logs/*.log
+!dummy
