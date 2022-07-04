@@ -35,7 +35,7 @@ if __name__ == "__main__":
     backends_cudnn_deterministic = config["deterministic"]["backends_cudnn_deterministic"]
     use_deterministic_algorithms = config["deterministic"]["use_deterministic_algorithms"]
     torch.backends.cudnn.deterministic = backends_cudnn_deterministic
-    torch.use_deterministic_algorithms = use_deterministic_algorithms
+    torch.use_deterministic_algorithms(use_deterministic_algorithms)
 
     # デバイスを取得
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
