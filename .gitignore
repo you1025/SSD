@@ -1,6 +1,9 @@
+.DS_Store
 __pycache__
 .ipynb_checkpoints
 
 data/VOCdevkit
+images/
 weights/vgg
+weights/models
 logs/*.log
