@@ -1,11 +1,9 @@
-import os, sys
 from time import time
 import torch
 from torch.nn.utils import clip_grad_value_
 from criterions import calc_total_loss
 
 # Logger の取得
-sys.path.append(os.path.join(os.path.dirname(__file__), "../logger/"))
 from logger import get_logger
 logger = get_logger()
 
