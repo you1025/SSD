@@ -7,9 +7,9 @@ from criterions import calc_total_loss
 from logger import get_logger
 logger = get_logger()
 
-def train(net, train_loader, valid_loader, criterion, optimizer, device, epochs, model_weight_output_dir="./", iter_per_log=10, last_iteration=0):
+def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, device, epochs, model_weight_output_dir="./", iter_per_log=10, last_iteration=0):
     net.to(device)
-    print(f"device: {device}")
+    logger.info(f"device: {device}")
 
     torch.backends.cudnn.benchmark = True
 
@@ -46,7 +46,6 @@ def train(net, train_loader, valid_loader, criterion, optimizer, device, epochs,
             optimizer.step()
 
             # 一定期間ごとにログを出力
-            # TODO: config で指定できるようにする
             if (iteration % iter_per_log == 0):
                 iter_duration = time() - iter_start_time
                 logger.info(f"iteration: {iteration:5d} - loss: {loss.item():6.3f}, {iter_per_log} iter: {iter_duration:4.1f} sec.")
@@ -55,6 +54,10 @@ def train(net, train_loader, valid_loader, criterion, optimizer, device, epochs,
             epoch_train_loss += loss.item()
             iteration += 1
 
+        # スケジュールに従って optimizer の学習率を変更
+        scheduler.step()
+        logger.info(f"optimizer: {optimizer}")
+
         # 毎エポック終了ごとに訓練誤差を出力
         logger.info(f"epoch: {epoch+1} - train_loss: {epoch_train_loss:7.3f}")
 
@@ -62,6 +65,7 @@ def train(net, train_loader, valid_loader, criterion, optimizer, device, epochs,
         epoch_duration = time() - epoch_start_time
         logger.info(f"epoch: {epoch+1} - {epoch_duration:4.1f} sec in epoch.")
 
+        # 10 エポックおきに実行
         if((epoch+1) % 10 == 0):
             # 検証ロスを算出
             epoch_valid_loss = calc_total_loss(net, criterion, valid_loader, device)

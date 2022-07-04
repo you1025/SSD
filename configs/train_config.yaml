@@ -49,6 +49,13 @@ optimizer:
     learning_rate: 1e-3
     momentum: 0.9
     weight_decay: 5e-4
+  scheduler:
+    # 経過 epoch 数ごとに学習率を減少(gamma 倍)
+    # -   0〜174 epoch: lr
+    # - 175〜249 epoch: lr * gamma
+    # - 250〜    epoch: lr * gamma^2
+    gamma: 0.1
+    milestones: [175, 250]
 
 train:
   epochs: 300

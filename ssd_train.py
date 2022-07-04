@@ -5,6 +5,7 @@ import warnings
 import torch
 from torch.utils.data import DataLoader
 from torch.optim import SGD
+from torch.optim.lr_scheduler import MultiStepLR
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 from data_transforms import DataTransformer
@@ -86,9 +87,13 @@ if __name__ == "__main__":
     momentum      = config["optimizer"]["SGD"]["momentum"]
     weight_decay  = eval(config["optimizer"]["SGD"]["weight_decay"])
     optimizer = SGD(net.parameters(), lr=learning_rate, momentum=momentum, weight_decay=weight_decay)
+    # 最適化スケジュールの設定
+    gamma      = config["optimizer"]["scheduler"]["gamma"]
+    milestones = config["optimizer"]["scheduler"]["milestones"]
+    scheduler = MultiStepLR(optimizer, milestones, gamma)
 
     # 学習の実行
     epochs                  = config["train"]["epochs"]
     model_weight_output_dir = config["train"]["model_weight_output_dir"]
     iter_per_log            = config["train"]["iter_per_log"]
-    train(net, train_loader, valid_loader, criterion, optimizer, device, epochs, model_weight_output_dir, iter_per_log)
+    train(net, train_loader, valid_loader, criterion, optimizer, scheduler, device, epochs, model_weight_output_dir, iter_per_log)
