@@ -73,3 +73,5 @@ def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, devi
 
             # モデルのパラメータを保存
             torch.save(net.state_dict(), f"{model_weight_output_dir}/ssd300_{epoch+1}.pth")
+            torch.save(optimizer.state_dict(), f"{model_weight_output_dir}/optimizer_{epoch+1}.pth")
+            torch.save(scheduler.state_dict(), f"{model_weight_output_dir}/scheduler_{epoch+1}.pth")
