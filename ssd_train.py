@@ -41,11 +41,11 @@ if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # VOC のクラス定義
-    voc_classes = config["classes"]
+    classes = config["source_data"]["classes"]
 
     # データのファイルパスを取得
-    source_dir = config["source_dir"]
-    root_path = os.path.join(os.path.dirname(__file__), source_dir)
+    dir_path = config["source_data"]["dir_path"]
+    root_path = os.path.join(os.path.dirname(__file__), dir_path)
     train_image_path_list, train_annotation_path_list, valid_image_path_list, valid_annotation_path_list = make_datapath_list(root_path)
 
     # Data Augumentation 用の transformer を作成
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     data_transformer = DataTransformer(input_size, color_mean)
 
     # アノテーション抽出用の extractor を作成
-    annotation_extractor = AnnotationExtractor(voc_classes)
+    annotation_extractor = AnnotationExtractor(classes)
 
     # DataSet を作成
     train_dataset = VOCDataset(

@@ -5,30 +5,30 @@ deterministic:
   backends_cudnn_deterministic: False # True を指定すると遅くなる...
   use_deterministic_algorithms: True
 
-classes: [
-    "aeroplane",
-    "bicycle",
-    "bird",
-    "boat",
-    "bottle",
-    "bus",
-    "car",
-    "cat",
-    "chair",
-    "cow",
-    "diningtable",
-    "dog",
-    "horse",
-    "motorbike",
-    "person",
-    "pottedplant",
-    "sheep",
-    "sofa",
-    "train",
-    "tvmonitor"
-]
-
-source_dir: data/VOCdevkit/VOC2012/
+source_data:
+  classes: [
+      "aeroplane",
+      "bicycle",
+      "bird",
+      "boat",
+      "bottle",
+      "bus",
+      "car",
+      "cat",
+      "chair",
+      "cow",
+      "diningtable",
+      "dog",
+      "horse",
+      "motorbike",
+      "person",
+      "pottedplant",
+      "sheep",
+      "sofa",
+      "train",
+      "tvmonitor"
+  ]
+  dir_path: data/VOCdevkit/VOC2012/
 
 data_loader:
   batch_size: 32
