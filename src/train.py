@@ -8,11 +8,11 @@ from logger import get_logger
 logger = get_logger("train")
 
 def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, device, config):
-    epochs                  = config["epochs"]
-    iters_per_log           = config["iters_per_log"]
-    epochs_per_log          = config["epochs_per_log"]
-    epochs_per_save         = config["epochs_per_save"]
-    model_weight_output_dir = config["model_weight_output_dir"]
+    epochs                   = config["epochs"]
+    iters_per_log            = config["iters_per_log"]
+    epochs_per_log           = config["epochs_per_log"]
+    epochs_per_save          = config["epochs_per_save"]
+    model_weight_output_dirs = config["model_weight_output_dirs"]
 
     net.to(device)
     logger.info(f"device: {device}")
@@ -80,6 +80,7 @@ def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, devi
         # 指定エポック毎にパラメータを保存
         if((epoch+1) % epochs_per_save == 0):
             # モデルのパラメータを保存
-            torch.save(net.state_dict(), f"{model_weight_output_dir}/ssd300_{epoch+1}.pth")
-            torch.save(optimizer.state_dict(), f"{model_weight_output_dir}/optimizer_{epoch+1}.pth")
-            torch.save(scheduler.state_dict(), f"{model_weight_output_dir}/scheduler_{epoch+1}.pth")
+            for output_dir in model_weight_output_dirs:
+                torch.save(net.state_dict(), f"{output_dir}/ssd300_{epoch+1}.pth")
+                torch.save(optimizer.state_dict(), f"{output_dir}/optimizer_{epoch+1}.pth")
+                torch.save(scheduler.state_dict(), f"{output_dir}/scheduler_{epoch+1}.pth")
