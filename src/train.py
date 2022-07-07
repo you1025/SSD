@@ -13,14 +13,13 @@ def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, devi
     epochs_per_log          = config["epochs_per_log"]
     epochs_per_save         = config["epochs_per_save"]
     model_weight_output_dir = config["model_weight_output_dir"]
-    last_iteration          = config["last_iteration"]
 
     net.to(device)
     logger.info(f"device: {device}")
 
     torch.backends.cudnn.benchmark = True
 
-    iteration = last_iteration + 1
+    iteration = 1
     for epoch in range(epochs):
         logger.info(f"epoch: {epoch+1}/{epochs}")
 

@@ -70,7 +70,6 @@ train:
   epochs_per_log: 10
   epochs_per_save: 10
   model_weight_output_dir: weights/models
-  last_iteration: 0
   additional_learning: False
   learned_model_path: weights/models/ssd300_300.pth
   learned_optimizer_path: weights/models/optimizer_300.pth
