@@ -16,17 +16,27 @@
             "formatter": "default",
             "stream": "ext://sys.stdout"
         },
-        "file": {
+        "file_train": {
             "class": "logging.FileHandler",
             "level": "DEBUG",
             "formatter": "default",
             "filename": "logs/ssd_train.log"
+        },
+        "file_inference": {
+            "class": "logging.FileHandler",
+            "level": "DEBUG",
+            "formatter": "default",
+            "filename": "logs/ssd_inference.log"
         }
     },
 
     "loggers": {
-        "SSD": {
-            "handlers": ["console", "file"],
+        "train": {
+            "handlers": ["console", "file_train"],
+            "level": "INFO"
+        },
+        "inference": {
+            "handlers": ["console", "file_inference"],
             "level": "INFO"
         }
     }

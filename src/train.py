@@ -5,7 +5,7 @@ from criterions import calc_total_loss
 
 # Logger の取得
 from logger import get_logger
-logger = get_logger()
+logger = get_logger("train")
 
 def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, device, config):
     epochs                  = config["epochs"]
