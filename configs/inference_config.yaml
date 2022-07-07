@@ -34,4 +34,4 @@ model:
     min_sizes: [30, 60, 111, 162, 213, 264]
     max_sizes: [60, 111, 162, 213, 264, 315]
     aspect_ratios: [[2], [2, 3], [2, 3], [2, 3], [2], [2]]
-  weight_path: weights/models/ssd300_200.pth
+  weight_path: weights/models/ssd300_300.pth
