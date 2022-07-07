@@ -4,9 +4,11 @@ import yaml
 sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 from inference import get_image_infos, save_images
 
+ROOT = os.path.dirname(__file__)
+
 if __name__ == "__main__":
     # 設定ファイルの読み込み
-    config_path = os.path.join(os.path.dirname(__file__), "configs/inference_config.yaml")
+    config_path = os.path.join(ROOT, "configs/inference_config.yaml")
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 

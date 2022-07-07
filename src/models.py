@@ -6,7 +6,7 @@ from torch.nn import Module, ModuleList, Parameter, Conv2d, MaxPool2d, ReLU
 from torch.nn.functional import relu
 from torch.nn.init import kaiming_normal_, constant_
 
-ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
+ROOT = os.path.join(os.path.dirname(__file__), "..")
 
 class SSD(Module):
     def __init__(self, phase, config):
@@ -91,7 +91,7 @@ class SSD(Module):
 
     def init_parameters(self, model_weight_path):
         # 訓練済みのパラメータを設定
-        weight_path = os.path.join(ROOT_DIR, model_weight_path)
+        weight_path = os.path.join(ROOT, model_weight_path)
         weights     = torch.load(weight_path)
         self.vgg.load_state_dict(weights)
 
@@ -322,6 +322,6 @@ def nm_suppression(boxes, scores, overlap=0.45, top_k=200):
     return torch.tensor(target_ids)
 
 def set_learned_weight(target_model, learned_model_path, device):
-    _learned_model_path = os.path.join(ROOT_DIR, learned_model_path)
+    _learned_model_path = os.path.join(ROOT, learned_model_path)
     _base_optimizer = torch.load(_learned_model_path, map_location=device)
     target_model.load_state_dict(_base_optimizer)

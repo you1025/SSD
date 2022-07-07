@@ -10,7 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 from models import SSD
 from data_transforms import DataTransformer
 
-ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
+ROOT = os.path.join(os.path.dirname(__file__), "..")
 
 def get_image_infos(config):
     # デバイスを取得
@@ -21,12 +21,12 @@ def get_image_infos(config):
     net = SSD(phase="inference", config=ssd_config)
 
     # 学習済みモデルを適用
-    weight_path = os.path.join(ROOT_DIR, config["model"]["weight_path"])
+    weight_path = os.path.join(ROOT, config["model"]["weight_path"])
     ssd_weights = torch.load(weight_path, map_location=device)
     net.load_state_dict(ssd_weights)
 
     # 対象画像パスから変換済画像と画像情報を取得
-    source_dir = os.path.join(ROOT_DIR, config["source_dir"])
+    source_dir = os.path.join(ROOT, config["source_dir"])
     transformed_images, image_infos = get_source_images_from_dir(source_dir)
 
     # BGR->RGB & 前チャネル へ変換
@@ -214,5 +214,5 @@ def save_images(image_infos, classes, output_dir):
             ax.text(x, y-5, display_text, bbox={"facecolor": color, "alpha": 0.5})
 
         # 画像の出力
-        output_file_path = os.path.join(ROOT_DIR, output_dir, f"{name}_detected.png")
+        output_file_path = os.path.join(output_dir, f"{name}_detected.png")
         plt.savefig(output_file_path)
