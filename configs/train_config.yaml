@@ -71,6 +71,7 @@ train:
   epochs_per_save: 10
   model_weight_output_dirs:
     - weights/models # ssd_train.py からの相対パス
+    #- /content/drive/MyDrive/ssd/weights
   additional_learning: False
   learned_model_path: weights/models/ssd300_300.pth
   learned_optimizer_path: weights/models/optimizer_300.pth
