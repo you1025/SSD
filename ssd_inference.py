@@ -89,6 +89,11 @@ def transform_and_extract_image_info(image_path_list):
     transformed_images = []
     image_infos = []
     for image_path in image_path_list:
+        # 画像ファイル以外は無視
+        # TODO: ちゃんと判定したい
+        if os.path.basename(image_path) == "dummy":
+            continue
+
         transformed_image, image_info = image_transform(image_path, transformer)
         transformed_images.append(transformed_image)
         image_infos.append(image_info)
