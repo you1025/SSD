@@ -11,7 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 from data_transforms import DataTransformer
 from datasets import make_datapath_list, VOCDataset, AnnotationExtractor
 from data_loaders import od_collate_fn
-from models import SSD
+from models import SSD, set_learned_weight
 from criterions import MultiBoxLoss
 from train import train
 
@@ -87,9 +87,8 @@ if __name__ == "__main__":
     net.init_parameters(model_weight_path)
     # 追加学習の場合は学習途中のモデルに復帰
     if config["train"]["additional_learning"]:
-        base_model_path = os.path.join(ROOT, config["train"]["base_model_path"])
-        base_model = torch.load(base_model_path, map_location=device)
-        net.load_state_dict(base_model)
+        learned_model_path = config["train"]["learned_model_path"]
+        set_learned_weight(net, learned_model_path, device)
 
     # 損失の設定
     jaccard_thresh = config["criterion"]["jaccard_thresh"]
@@ -103,9 +102,8 @@ if __name__ == "__main__":
     optimizer = SGD(net.parameters(), lr=learning_rate, momentum=momentum, weight_decay=weight_decay)
     # 追加学習の場合は学習途中の optimizer に復帰
     if config["train"]["additional_learning"]:
-        base_optimizer_path = os.path.join(ROOT, config["train"]["base_optimizer_path"])
-        base_optimizer = torch.load(base_optimizer_path, map_location=device)
-        optimizer.load_state_dict(base_optimizer)
+        learned_optimizer_path = config["train"]["learned_optimizer_path"]
+        set_learned_weight(optimizer, learned_optimizer_path, device)
 
     # 最適化スケジュールの設定
     gamma      = config["optimizer"]["scheduler"]["gamma"]
@@ -113,9 +111,8 @@ if __name__ == "__main__":
     scheduler = MultiStepLR(optimizer, milestones, gamma)
     # 追加学習の場合は学習途中の scheduler に復帰
     if config["train"]["additional_learning"]:
-        base_scheduler_path = os.path.join(ROOT, config["train"]["base_scheduler_path"])
-        base_scheduler = torch.load(base_scheduler_path, map_location=device)
-        scheduler.load_state_dict(base_scheduler)
+        learned_scheduler_path = config["train"]["learned_scheduler_path"]
+        set_learned_weight(scheduler, learned_scheduler_path, device)
 
     # 学習の実行
     train_config = config["train"]

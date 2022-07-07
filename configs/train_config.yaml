@@ -72,6 +72,6 @@ train:
   model_weight_output_dir: weights/models
   last_iteration: 0
   additional_learning: False
-  base_model_path: weights/models/ssd300_300.pth
-  base_optimizer_path: weights/models/optimizer_300.pth
-  base_scheduler_path: weights/models/scheduler_300.pth
+  learned_model_path: weights/models/ssd300_300.pth
+  learned_optimizer_path: weights/models/optimizer_300.pth
+  learned_scheduler_path: weights/models/scheduler_300.pth

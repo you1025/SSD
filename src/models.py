@@ -320,3 +320,8 @@ def nm_suppression(boxes, scores, overlap=0.45, top_k=200):
         remaining_indexes = remaining_indexes[iou.le(overlap)]
 
     return torch.tensor(target_ids)
+
+def set_learned_weight(target_model, learned_model_path, device):
+    _learned_model_path = os.path.join(ROOT_DIR, learned_model_path)
+    _base_optimizer = torch.load(_learned_model_path, map_location=device)
+    target_model.load_state_dict(_base_optimizer)
