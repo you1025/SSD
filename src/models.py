@@ -1,9 +1,12 @@
+import os
 import numpy as np
 from itertools import product
 import torch
 from torch.nn import Module, ModuleList, Parameter, Conv2d, MaxPool2d, ReLU
 from torch.nn.functional import relu
 from torch.nn.init import kaiming_normal_, constant_
+
+ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 
 class SSD(Module):
     def __init__(self, phase, config):
@@ -86,9 +89,11 @@ class SSD(Module):
         else:
             return (loc, conf, self.dbox_list)
 
-    def init_parameters(self, vgg_weights):
-        # 訓練済みの VGG16 パラメータを設定
-        self.vgg.load_state_dict(vgg_weights)
+    def init_parameters(self, model_weight_path):
+        # 訓練済みのパラメータを設定
+        weight_path = os.path.join(ROOT_DIR, model_weight_path)
+        weights     = torch.load(weight_path)
+        self.vgg.load_state_dict(weights)
 
         # VGG 以外のパラメータを初期化(He)
         self.extras.apply(self.__weights_init)

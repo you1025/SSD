@@ -15,6 +15,7 @@ from models import SSD
 from criterions import MultiBoxLoss
 from train import train
 
+ROOT = os.path.dirname(__file__)
 
 if __name__ == "__main__":
 
@@ -22,7 +23,7 @@ if __name__ == "__main__":
     warnings.simplefilter("ignore")
 
     # 設定ファイルの読み込み
-    config_path = os.path.join(os.path.dirname(__file__), "configs/train_config.yaml")
+    config_path = os.path.join(ROOT, "configs/train_config.yaml")
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 
@@ -45,7 +46,7 @@ if __name__ == "__main__":
 
     # データのファイルパスを取得
     dir_path = config["source_data"]["dir_path"]
-    root_path = os.path.join(os.path.dirname(__file__), dir_path)
+    root_path = os.path.join(ROOT, dir_path)
     train_image_path_list, train_annotation_path_list, valid_image_path_list, valid_annotation_path_list = make_datapath_list(root_path)
 
     # Data Augumentation 用の transformer を作成
@@ -81,12 +82,14 @@ if __name__ == "__main__":
     # モデルの作成
     ssd_config = config["model"]["ssd_config"]
     net = SSD(phase="train", config=ssd_config)
-
     # 既存モデルで初期値を設定
-    vgg_weight_path = config["model"]["initial_weight"]["vgg"]
-    weight_path     = os.path.join(os.path.dirname(__file__), vgg_weight_path)
-    weights         = torch.load(weight_path)
-    net.init_parameters(weights)
+    model_weight_path = config["model"]["initial_weight"]["vgg"]
+    net.init_parameters(model_weight_path)
+    # 追加学習の場合は学習途中のモデルに復帰
+    if config["train"]["additional_learning"]:
+        base_model_path = os.path.join(ROOT, config["train"]["base_model_path"])
+        base_model = torch.load(base_model_path, map_location=device)
+        net.load_state_dict(base_model)
 
     # 損失の設定
     jaccard_thresh = config["criterion"]["jaccard_thresh"]
@@ -98,10 +101,21 @@ if __name__ == "__main__":
     momentum      = config["optimizer"]["SGD"]["momentum"]
     weight_decay  = eval(config["optimizer"]["SGD"]["weight_decay"])
     optimizer = SGD(net.parameters(), lr=learning_rate, momentum=momentum, weight_decay=weight_decay)
+    # 追加学習の場合は学習途中の optimizer に復帰
+    if config["train"]["additional_learning"]:
+        base_optimizer_path = os.path.join(ROOT, config["train"]["base_optimizer_path"])
+        base_optimizer = torch.load(base_optimizer_path, map_location=device)
+        optimizer.load_state_dict(base_optimizer)
+
     # 最適化スケジュールの設定
     gamma      = config["optimizer"]["scheduler"]["gamma"]
     milestones = config["optimizer"]["scheduler"]["milestones"]
     scheduler = MultiStepLR(optimizer, milestones, gamma)
+    # 追加学習の場合は学習途中の scheduler に復帰
+    if config["train"]["additional_learning"]:
+        base_scheduler_path = os.path.join(ROOT, config["train"]["base_scheduler_path"])
+        base_scheduler = torch.load(base_scheduler_path, map_location=device)
+        scheduler.load_state_dict(base_scheduler)
 
     # 学習の実行
     train_config = config["train"]
