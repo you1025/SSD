@@ -104,7 +104,5 @@ if __name__ == "__main__":
     scheduler = MultiStepLR(optimizer, milestones, gamma)
 
     # 学習の実行
-    epochs                  = config["train"]["epochs"]
-    model_weight_output_dir = config["train"]["model_weight_output_dir"]
-    iter_per_log            = config["train"]["iter_per_log"]
-    train(net, train_loader, valid_loader, criterion, optimizer, scheduler, device, epochs, model_weight_output_dir, iter_per_log)
+    train_config = config["train"]
+    train(net, train_loader, valid_loader, criterion, optimizer, scheduler, device, train_config)

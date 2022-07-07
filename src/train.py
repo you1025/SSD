@@ -7,7 +7,14 @@ from criterions import calc_total_loss
 from logger import get_logger
 logger = get_logger()
 
-def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, device, epochs, model_weight_output_dir="./", iter_per_log=10, last_iteration=0):
+def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, device, config):
+    epochs                  = config["epochs"]
+    iters_per_log           = config["iters_per_log"]
+    epochs_per_log          = config["epochs_per_log"]
+    epochs_per_save         = config["epochs_per_save"]
+    model_weight_output_dir = config["model_weight_output_dir"]
+    last_iteration          = config["last_iteration"]
+
     net.to(device)
     logger.info(f"device: {device}")
 
@@ -46,9 +53,9 @@ def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, devi
             optimizer.step()
 
             # 一定期間ごとにログを出力
-            if (iteration % iter_per_log == 0):
+            if (iteration % iters_per_log == 0):
                 iter_duration = time() - iter_start_time
-                logger.info(f"iteration: {iteration:5d} - loss: {loss.item():6.3f}, {iter_per_log} iter: {iter_duration:4.1f} sec.")
+                logger.info(f"iteration: {iteration:5d} - loss: {loss.item():6.3f}, {iters_per_log} iter: {iter_duration:4.1f} sec.")
                 iter_start_time = time()
 
             epoch_train_loss += loss.item()
@@ -65,12 +72,14 @@ def train(net, train_loader, valid_loader, criterion, optimizer, scheduler, devi
         epoch_duration = time() - epoch_start_time
         logger.info(f"epoch: {epoch+1} - {epoch_duration:4.1f} sec in epoch.")
 
-        # 10 エポックおきに実行
-        if((epoch+1) % 10 == 0):
+        # 指定エポック毎にログを出力
+        if((epoch+1) % epochs_per_log == 0):
             # 検証ロスを算出
             epoch_valid_loss = calc_total_loss(net, criterion, valid_loader, device)
             logger.info(f"epoch: {epoch+1} - valid_loss: {epoch_valid_loss:7.3f}")
 
+        # 指定エポック毎にパラメータを保存
+        if((epoch+1) % epochs_per_save == 0):
             # モデルのパラメータを保存
             torch.save(net.state_dict(), f"{model_weight_output_dir}/ssd300_{epoch+1}.pth")
             torch.save(optimizer.state_dict(), f"{model_weight_output_dir}/optimizer_{epoch+1}.pth")

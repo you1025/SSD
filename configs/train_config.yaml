@@ -66,5 +66,8 @@ optimizer:
 
 train:
   epochs: 300
+  iters_per_log: 10
+  epochs_per_log: 10
+  epochs_per_save: 10
   model_weight_output_dir: weights/models
-  iter_per_log: 10
+  last_iteration: 0
